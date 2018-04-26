@@ -42,5 +42,48 @@ namespace WebApiConsumer.Controllers
                 throw ex;
             }
         }
+
+        public IActionResult Create()
+        {
+            return View();
+        }
+
+        public IActionResult Edit()
+        {
+            return View();
+        }
+
+        public IActionResult Delete(int id)
+        {
+            DeleteTodoFromAPI(id);
+            return RedirectToAction("Index");
+        }
+
+        private string DeleteTodoFromAPI(int id)
+        {
+            try
+            {
+                var resultList = "";
+                var client = new HttpClient();
+                var uri = String.Concat("http://localhost:50219/api/todo/", id);
+                var getDataTask = client.DeleteAsync(uri)
+                    .ContinueWith(response =>
+                    {
+                        var result = response.Result;
+                        if (result.StatusCode == System.Net.HttpStatusCode.NoContent)
+                        {
+                            resultList = "Deletado com Sucesso!";
+                        }
+                    });
+                getDataTask.Wait();
+                return resultList;
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+        }
+
     }
 }
